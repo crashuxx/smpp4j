@@ -67,7 +67,7 @@ public class PDUTest {
         assertEquals(23, decoder.getLength());
         assertEquals(0x7FFFFFFFl, decoder.getId());
         assertEquals(0x12345678l, decoder.getStatus());
-        assertEquals(0xFFFFFFFFl, decoder.getSequence());
+        assertEquals(0xFFFFFFFFl, decoder.getSequenceNumber());
 
         assertEquals(0xAFBFCFDFl, decoder.readUInt32());
         assertEquals(0x9F8F, decoder.readUInt16());

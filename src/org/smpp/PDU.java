@@ -3,29 +3,39 @@ package org.smpp;
 /**
  * Created by c on 12/12/13.
  */
-public class PDU {
+public abstract class PDU {
 
-/*    private long offset = 0;
+    private long commandStatus;
+    private long commandSequenceNumber;
 
-    private byte head[] = new byte[16];
-    private byte body[] = null;
-*/
-    private long sequence = 0;
-    private long status = 0;
+    public abstract long getCommandID();
+    public abstract PDUEncoder encode();
 
-    public long getSequence() {
-        return sequence;
+    public long getCommandStatus() {
+        return commandStatus;
     }
 
-    public void setSequence(long sequence) {
-        this.sequence = sequence;
+    public void setCommandStatus(long commandStatus) {
+        this.commandStatus = commandStatus;
     }
 
-    public long getStatus() {
-        return status;
+    public long getCommandSequenceNumber() {
+        return commandSequenceNumber;
     }
 
-    public void setStatus(long status) {
-        this.status = status;
+    public void setCommandSequenceNumber(long commandSequenceNumber) {
+        this.commandSequenceNumber = commandSequenceNumber;
+    }
+
+    protected void decodeHeader(PDUDecoder decoder) {
+        setCommandStatus(decoder.getStatus());
+        setCommandSequenceNumber(decoder.getSequenceNumber());
+    }
+
+    protected void encodeHeader(PDUEncoder encoder) {
+        encoder.writeUInt32(0); // skip length
+        encoder.writeUInt32(getCommandID());
+        encoder.writeUInt32(getCommandStatus());
+        encoder.writeUInt32(getCommandSequenceNumber());
     }
 }

@@ -2,7 +2,7 @@ package org.smpp;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
+import java.nio.charset.Charset;
 
 /**
  * Created by c on 15.12.13.
@@ -18,8 +18,8 @@ public class PDUEncoder {
 
     private void makeSpaceFor(int length) {
 
-        while( data.remaining() < length ) {
-            data.limit( data.limit()+512 );
+        while (data.remaining() < length) {
+            data.limit(data.limit() + 512);
         }
     }
 
@@ -33,14 +33,25 @@ public class PDUEncoder {
         data.put(value, 0, value.length);
     }
 
+    public void writeString(String string) {
+        writeString(string, "ASCII");
+    }
+
+    public void writeString(String string, String encoding) {
+        if( string != null ) {
+            writeByte(string.getBytes(Charset.forName(encoding)));
+        }
+        writeByte((byte) 0x00);
+    }
+
     public void writeUInt8(short value) {
         makeSpaceFor(1);
-        data.put((byte)(value));
+        data.put((byte) (value));
     }
 
     public void writeUInt16(int value) {
         makeSpaceFor(2);
-        data.putShort((short)(value&0xffff));
+        data.putShort((short) (value & 0xffff));
     }
 
     public void writeUInt32(long value) {
@@ -69,7 +80,7 @@ public class PDUEncoder {
         System.out.println("Length: " + length);
         System.out.println("Hex dump:");
 
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             System.out.printf("%02X ", data.get(i));
         }
 

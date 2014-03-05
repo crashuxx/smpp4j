@@ -1,5 +1,6 @@
 package org.smpp;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -33,7 +34,7 @@ public class PDUDecoder {
         return status;
     }
 
-    public long getSequence() {
+    public long getSequenceNumber() {
         return sequence;
     }
 
@@ -77,6 +78,9 @@ public class PDUDecoder {
         return i;
     }
 
+    /**
+     * Rewind internal position to beginning, for read or over write
+     */
     public void rewind() {
         body.rewind();
     }
@@ -90,8 +94,8 @@ public class PDUDecoder {
         sequence = head.getInt() & 0xffffffffL;
     }
 
-    public short readUInt8() {
-        return (short) (body.get() & 0xff);
+    public byte readUInt8() {
+        return body.get();
     }
 
     public int readUInt16() {
@@ -108,10 +112,10 @@ public class PDUDecoder {
         body.mark();
 
         while (maxLength > 0 && length < maxLength) {
-            length++;
             if (body.get() == 0x00) {
                 break;
             }
+            length++;
         }
 
         byte[] cstring = new byte[length];
@@ -119,8 +123,32 @@ public class PDUDecoder {
         if (length > 0) {
             body.reset();
             body.get(cstring, 0, length);
+            body.get();// skip last char (0x00)
         }
 
         return cstring;
+    }
+
+    public String readString(int maxLength) {
+        try {
+            return readString(maxLength, "ASCII");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String readString(int maxLength, String encoding) throws UnsupportedEncodingException {
+
+        String string = null;
+        byte[] bytes = readCString(maxLength);
+
+        if( bytes.length > 0 ) {
+            string = new String(bytes, encoding);
+        } else {
+            string = "";
+        }
+
+        return string;
     }
 }
