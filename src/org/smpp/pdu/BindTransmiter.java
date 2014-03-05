@@ -14,23 +14,23 @@ public class BindTransmiter extends PDU {
     /**
      * max 16
      */
-    String systemId = "";
+    private String systemId = "";
     /**
      * max 9
      */
-    String password = "";
+    private String password = "";
     /**
      * max 13
      */
-    String systemType = "";
+    private String systemType = "";
 
-    byte interfaceVersion;
-    byte addrTon;
-    byte addrNpi;
+    private byte interfaceVersion;
+    private byte addrTon;
+    private byte addrNpi;
     /**
      * max 41
      */
-    String addressRange = "";
+    private String addressRange = "";
 
     public BindTransmiter() {
     }
